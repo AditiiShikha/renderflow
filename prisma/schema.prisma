@@ -1,6 +1,5 @@
-// Prisma foundation — owned/extended by Person A.
-// Models (Tag, Asset, Line, Alarm) are intentionally not defined yet.
-// See /shared/schemas for the contracts these models must mirror.
+// Prisma foundation — owned by Person A.
+// Models mirror the contracts in /shared/schemas.
 
 generator client {
   provider = "prisma-client-js"
@@ -9,4 +8,42 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
+}
+
+model Line {
+  id     String  @id
+  name   String
+  assets Asset[]
+}
+
+model Asset {
+  id     String @id
+  name   String
+  lineId String
+  line   Line   @relation(fields: [lineId], references: [id])
+  tags   Tag[]
+}
+
+model Tag {
+  id            String  @id
+  name          String
+  unit          String
+  min           Float
+  max           Float
+  warnThreshold Float
+  critThreshold Float
+  category      String
+  assetId       String
+  asset         Asset   @relation(fields: [assetId], references: [id])
+  alarms        Alarm[]
+}
+
+model Alarm {
+  id        String   @id
+  tagId     String
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  severity  String
+  message   String
+  timestamp DateTime
+  active    Boolean
 }

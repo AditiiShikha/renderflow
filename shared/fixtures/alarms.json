@@ -2,10 +2,10 @@
   { "id": "alarm_042", "tagId": "pump3_temp", "severity": "critical",
     "message": "Pump 3 temperature exceeded critical threshold",
     "timestamp": "2026-09-10T10:15:00Z", "active": true },
-  { "id": "alarm_017", "tagId": "pump4_pressure", "severity": "warning",
-    "message": "Pump 4 pressure approaching warning threshold",
+  { "id": "alarm_017", "tagId": "conveyor_vibration", "severity": "warning",
+    "message": "Conveyor 1 vibration approaching warning threshold",
     "timestamp": "2026-09-10T09:52:00Z", "active": true },
-  { "id": "alarm_005", "tagId": "conveyor1_vibration", "severity": "warning",
-    "message": "Conveyor 1 vibration returned to normal range",
+  { "id": "alarm_005", "tagId": "motor_temp", "severity": "warning",
+    "message": "Conveyor 1 motor temperature returned to normal range",
     "timestamp": "2026-09-10T08:30:00Z", "active": false }
 ]
