@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const contextRoutes = require('./routes/context.routes');
 const generateRoutes = require('./routes/generate.routes');
+const { startSimulator } = require('./ingestion/simulator');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +21,10 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`RenderFlow backend listening on http://localhost:${PORT}`);
+
+  startSimulator().catch((err) => {
+    console.error('Failed to start telemetry simulator:', err);
+  });
 });
 
 module.exports = app;
