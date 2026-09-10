@@ -1,0 +1,10 @@
+{
+  "description": "Experience a cutting-edge industrial HMI dashboard that dynamically adapts to machine context and alarms, enhancing operational efficiency and decision-making.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
