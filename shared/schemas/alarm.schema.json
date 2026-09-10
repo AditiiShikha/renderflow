@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "renderflow://schemas/alarm.schema.json",
+  "title": "Alarm",
+  "type": "object",
+  "required": ["id", "tagId", "severity", "message", "timestamp", "active"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "tagId": { "type": "string" },
+    "severity": { "type": "string", "enum": ["warning", "critical"] },
+    "message": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "active": { "type": "boolean" }
+  }
+}

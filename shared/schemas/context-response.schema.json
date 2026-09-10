@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "renderflow://schemas/context-response.schema.json",
+  "title": "ContextResponse",
+  "description": "Response body of GET /api/context.",
+  "type": "object",
+  "required": ["tags", "hierarchy"],
+  "additionalProperties": false,
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": { "$ref": "tag.schema.json" }
+    },
+    "hierarchy": {
+      "type": "array",
+      "items": { "$ref": "line.schema.json" }
+    }
+  }
+}

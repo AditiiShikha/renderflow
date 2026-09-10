@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "renderflow://schemas/trigger.schema.json",
+  "title": "Trigger",
+  "description": "The trigger that produced (or requests) a screen spec via POST /api/generate-screen.",
+  "type": "object",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["type", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "prompt" },
+        "text": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["type", "alarmId"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "alarm" },
+        "alarmId": { "type": "string" }
+      }
+    }
+  ]
+}

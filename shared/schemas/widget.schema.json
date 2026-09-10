@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "renderflow://schemas/widget.schema.json",
+  "title": "Widget",
+  "description": "Fixed set of 6 widget types. Do not add more. Every widget must carry a `reason` that names the actual tag or alarm involved, never a generic phrase.",
+  "type": "object",
+  "required": ["type", "reason"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["gauge", "trend", "numeric_card", "alarm_banner", "table", "toggle"]
+    },
+    "reason": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "gauge" } } },
+      "then": {
+        "required": ["tag", "size"],
+        "properties": {
+          "tag": { "type": "string" },
+          "size": { "type": "string", "enum": ["small", "medium", "large"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "trend" } } },
+      "then": {
+        "required": ["tag", "window_seconds", "size"],
+        "properties": {
+          "tag": { "type": "string" },
+          "window_seconds": { "type": "number" },
+          "size": { "type": "string", "enum": ["small", "medium", "large"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "numeric_card" } } },
+      "then": {
+        "required": ["tag"],
+        "properties": {
+          "tag": { "type": "string" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "alarm_banner" } } },
+      "then": {
+        "required": ["tags"],
+        "properties": {
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "table" } } },
+      "then": {
+        "required": ["tags"],
+        "properties": {
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "toggle" } } },
+      "then": {
+        "required": ["tag", "label"],
+        "properties": {
+          "tag": { "type": "string" },
+          "label": { "type": "string" }
+        }
+      }
+    }
+  ]
+}

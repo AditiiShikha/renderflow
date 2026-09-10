@@ -1,0 +1,21 @@
+{
+  "name": "renderflow-backend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "RenderFlow backend — Express API + Prisma/SQLite data layer.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "prisma": "^5.19.1"
+  }
+}

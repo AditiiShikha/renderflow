@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "renderflow://schemas/generate-screen-request.schema.json",
+  "title": "GenerateScreenRequest",
+  "description": "Request body of POST /api/generate-screen.",
+  "type": "object",
+  "required": ["trigger"],
+  "additionalProperties": false,
+  "properties": {
+    "trigger": { "$ref": "trigger.schema.json" }
+  }
+}

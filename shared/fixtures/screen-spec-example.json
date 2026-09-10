@@ -1,0 +1,13 @@
+{
+  "title": "Pump 3 Overview",
+  "layout": "grid",
+  "trigger": { "type": "alarm", "alarmId": "alarm_042" },
+  "widgets": [
+    { "type": "gauge", "size": "medium", "tag": "pump3_temp",
+      "reason": "Shown because alarm_042 (temperature exceeded critical threshold) is active on Pump 3" },
+    { "type": "trend", "size": "large", "tag": "pump3_pressure", "window_seconds": 60,
+      "reason": "Pressure trend for Pump 3, the same asset as the active alarm" },
+    { "type": "alarm_banner", "tags": ["pump3_temp"],
+      "reason": "alarm_042 is currently active and critical" }
+  ]
+}

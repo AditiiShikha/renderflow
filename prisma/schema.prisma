@@ -1,0 +1,12 @@
+// Prisma foundation — owned/extended by Person A.
+// Models (Tag, Asset, Line, Alarm) are intentionally not defined yet.
+// See /shared/schemas for the contracts these models must mirror.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}

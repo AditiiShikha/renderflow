@@ -1,0 +1,39 @@
+{
+  "tags": [
+    { "id": "pump3_temp", "name": "Pump 3 Temperature", "unit": "°C",
+      "min": 0, "max": 120, "warnThreshold": 85, "critThreshold": 100,
+      "assetId": "pump_3", "category": "temperature" },
+    { "id": "pump3_pressure", "name": "Pump 3 Pressure", "unit": "bar",
+      "min": 0, "max": 10, "warnThreshold": 7, "critThreshold": 9,
+      "assetId": "pump_3", "category": "pressure" },
+    { "id": "pump3_flow", "name": "Pump 3 Flow Rate", "unit": "L/min",
+      "min": 0, "max": 500, "warnThreshold": 400, "critThreshold": 460,
+      "assetId": "pump_3", "category": "flow" },
+    { "id": "pump4_temp", "name": "Pump 4 Temperature", "unit": "°C",
+      "min": 0, "max": 120, "warnThreshold": 85, "critThreshold": 100,
+      "assetId": "pump_4", "category": "temperature" },
+    { "id": "pump4_pressure", "name": "Pump 4 Pressure", "unit": "bar",
+      "min": 0, "max": 10, "warnThreshold": 7, "critThreshold": 9,
+      "assetId": "pump_4", "category": "pressure" },
+    { "id": "pump4_flow", "name": "Pump 4 Flow Rate", "unit": "L/min",
+      "min": 0, "max": 500, "warnThreshold": 400, "critThreshold": 460,
+      "assetId": "pump_4", "category": "flow" },
+    { "id": "conveyor1_speed", "name": "Conveyor 1 Speed", "unit": "m/s",
+      "min": 0, "max": 3, "warnThreshold": 2.4, "critThreshold": 2.8,
+      "assetId": "conveyor_1", "category": "speed" },
+    { "id": "conveyor1_vibration", "name": "Conveyor 1 Vibration", "unit": "mm/s",
+      "min": 0, "max": 20, "warnThreshold": 12, "critThreshold": 16,
+      "assetId": "conveyor_1", "category": "vibration" }
+  ],
+  "hierarchy": [
+    {
+      "id": "line_1",
+      "name": "Packaging Line 1",
+      "assets": [
+        { "id": "pump_3", "name": "Pump 3", "tagIds": ["pump3_temp", "pump3_pressure", "pump3_flow"] },
+        { "id": "pump_4", "name": "Pump 4", "tagIds": ["pump4_temp", "pump4_pressure", "pump4_flow"] },
+        { "id": "conveyor_1", "name": "Conveyor 1", "tagIds": ["conveyor1_speed", "conveyor1_vibration"] }
+      ]
+    }
+  ]
+}
