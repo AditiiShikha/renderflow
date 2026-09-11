@@ -197,12 +197,12 @@ export default function App() {
       />
 
       {!telemetryOnline && (
-        <div className="px-5 py-1.5 text-[11px] tracking-wide uppercase" style={{ background: 'rgba(224,85,74,0.15)', color: 'var(--color-critical)' }}>
+        <div className="font-label px-6 py-2 text-xs tracking-wide uppercase" style={{ background: 'rgba(193,104,92,0.16)', color: 'var(--color-critical)' }}>
           Backend telemetry unreachable — showing last known values
         </div>
       )}
       {!alarmsOnline && (
-        <div className="px-5 py-1.5 text-[11px] tracking-wide uppercase" style={{ background: 'rgba(224,85,74,0.15)', color: 'var(--color-critical)' }}>
+        <div className="font-label px-6 py-2 text-xs tracking-wide uppercase" style={{ background: 'rgba(193,104,92,0.16)', color: 'var(--color-critical)' }}>
           Alarm monitoring unreachable — active alarms may be stale
         </div>
       )}
@@ -214,7 +214,7 @@ export default function App() {
       />
 
       <div className="flex flex-1 min-h-0">
-        <main className="flex-1 p-5 relative min-w-0">
+        <main className="flex-1 p-6 relative min-w-0">
           {generating && <GenerationOverlay assetLabel={assetLabel} phaseIndex={phaseIndex} />}
           {!generating && !screenSpec && !error && <WelcomeState />}
           {!generating && error && <ErrorState message={error} />}

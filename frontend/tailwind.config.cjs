@@ -4,8 +4,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['"Barlow Condensed"', '"Arial Narrow"', 'sans-serif'],
+        // Editorial headings now read on the humanist (non-condensed) cut of
+        // the same self-hosted family — large and confident rather than
+        // narrow/technical. `label` keeps the condensed cut for the few
+        // genuinely small uppercase metadata tags (status pills, kickers).
+        heading: ['Barlow', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
         body: ['Barlow', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
+        label: ['"Barlow Condensed"', '"Arial Narrow"', 'sans-serif'],
       },
       keyframes: {
         'rf-pulse': { '0%, 100%': { opacity: 1, transform: 'scale(1)' }, '50%': { opacity: 0.4, transform: 'scale(1.35)' } },
@@ -17,17 +22,17 @@ module.exports = {
         'rf-fadein': { from: { opacity: 0, transform: 'translateY(10px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
         'rf-blink': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.3 } },
         'rf-alarmglow': {
-          '0%, 100%': { boxShadow: '0 0 6px 0 rgba(224,85,74,0.4)' },
-          '50%': { boxShadow: '0 0 18px 2px rgba(224,85,74,0.6)' },
+          '0%, 100%': { boxShadow: '0 0 6px 0 rgba(193,104,92,0.35)' },
+          '50%': { boxShadow: '0 0 18px 2px rgba(193,104,92,0.55)' },
         },
         'rf-rotate': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
         // A calm, one-shot "new/updated" cue — distinct from rf-alarmglow (danger)
         // so a routine event (new history entry) never borrows the visual
         // grammar reserved for a genuine critical alarm.
         'rf-highlight': {
-          '0%': { boxShadow: '0 0 0 0 rgba(143,174,114,0)' },
-          '25%': { boxShadow: '0 0 14px 2px rgba(143,174,114,0.5)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(143,174,114,0)' },
+          '0%': { boxShadow: '0 0 0 0 rgba(143,190,145,0)' },
+          '25%': { boxShadow: '0 0 14px 2px rgba(143,190,145,0.45)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(143,190,145,0)' },
         },
       },
       animation: {
