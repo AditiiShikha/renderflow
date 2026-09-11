@@ -20,7 +20,7 @@ export default function HistorySidebar({ open, history, currentKey, newHistoryId
               return (
                 <button
                   key={h.id} type="button" onClick={() => onSelect(h)}
-                  className={`relative text-left px-3 py-2.5 ${newHistoryId === h.id ? 'animate-rf-alarmglow' : ''}`}
+                  className={`relative text-left px-3 py-2.5 ${newHistoryId === h.id ? 'animate-rf-highlight' : ''}`}
                   style={{
                     border: '1px solid', borderColor: active ? 'var(--color-accent)' : 'var(--color-divider)',
                     background: active ? 'linear-gradient(165deg, rgba(143,174,114,0.12), transparent)' : 'transparent',

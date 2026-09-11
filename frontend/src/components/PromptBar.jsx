@@ -30,9 +30,9 @@ export default function PromptBar({ prompt, onPromptChange, onSubmit, generating
           >
             <Corners />
             <svg
-              width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={speech.listening ? '#e0554a' : 'var(--color-accent)'}
+              width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={speech.listening ? 'var(--color-critical)' : 'var(--color-accent)'}
               strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-              className={speech.listening ? 'animate-rf-pulse' : ''}
+              className={speech.listening ? 'animate-rf-breathe' : ''}
             >
               <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
               <path d="M19 10v1a7 7 0 0 1-14 0v-1" /><line x1="12" y1="18" x2="12" y2="22" /><line x1="8" y1="22" x2="16" y2="22" />

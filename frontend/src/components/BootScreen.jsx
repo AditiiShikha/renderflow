@@ -17,7 +17,7 @@ export default function BootScreen({ visible, assetCount, tagCount }) {
       </div>
       <div className="text-[13px] text-center leading-loose opacity-85">
         <div className="animate-rf-fadein" style={{ animationDelay: '0.05s' }}>Packaging Line 1</div>
-        <div className="animate-rf-fadein" style={{ animationDelay: '0.25s', color: '#46c17d' }}>● Online</div>
+        <div className="animate-rf-fadein" style={{ animationDelay: '0.25s', color: 'var(--color-normal)' }}>● Online</div>
         <div className="animate-rf-fadein" style={{ animationDelay: '0.45s' }}>● {assetCount != null ? assetCount : '--'} active assets</div>
         <div className="animate-rf-fadein" style={{ animationDelay: '0.65s' }}>● {tagCount != null ? tagCount : '--'} telemetry tags</div>
       </div>

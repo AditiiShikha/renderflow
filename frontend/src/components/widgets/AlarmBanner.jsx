@@ -4,13 +4,16 @@
 // actual alarm id (if any) is looked up from the live GET /api/alarms list
 // by matching tagId — and simply omitted if no matching active alarm is
 // found, rather than inventing one.
-import { useState } from 'react';
+// Ack state now lives in App.jsx (ackedAlarmIds/onAcknowledgeAlarm) instead
+// of a local useState, so acknowledging an alarm here also clears it from
+// the AlarmAnnunciator strip and vice versa — one alarm, one ack state.
 import WidgetCard from './WidgetCard';
 import { statusOf, STATUS_COLOR, fmt } from '../../lib/status';
 import Corners from '../Corners';
 
-export default function AlarmBanner({ widget, telemetry, tagsById, alarms, delayMs }) {
-  const [acked, setAcked] = useState(false);
+export default function AlarmBanner({ widget, telemetry, tagsById, alarms, delayMs, ackedAlarmIds, onAcknowledge }) {
+  const matchingAlarm = (alarms || []).find((a) => widget.tags.includes(a.tagId));
+  const acked = matchingAlarm ? (ackedAlarmIds && ackedAlarmIds.has(matchingAlarm.id)) : false;
   const rows = widget.tags.map((tagId) => {
     const meta = tagsById[tagId];
     const value = telemetry[tagId];
@@ -18,9 +21,8 @@ export default function AlarmBanner({ widget, telemetry, tagsById, alarms, delay
     return { tagId, name: meta ? meta.name : tagId, unit: meta ? meta.unit : '', displayValue: fmt(value), status };
   });
   const worst = rows.some((r) => r.status === 'critical') ? 'critical' : rows.some((r) => r.status === 'warning') ? 'warning' : 'normal';
-  const color = acked ? '#98989b' : STATUS_COLOR[worst];
+  const color = acked ? 'var(--color-muted)' : STATUS_COLOR[worst];
   const critical = !acked && worst === 'critical';
-  const matchingAlarm = (alarms || []).find((a) => widget.tags.includes(a.tagId));
 
   return (
     <WidgetCard
@@ -41,7 +43,7 @@ export default function AlarmBanner({ widget, telemetry, tagsById, alarms, delay
           {matchingAlarm && <div className="text-[11px] opacity-50 mt-1.5">{matchingAlarm.id}</div>}
         </div>
         <button
-          type="button" onClick={() => setAcked(true)} disabled={acked}
+          type="button" onClick={() => matchingAlarm && onAcknowledge && onAcknowledge(matchingAlarm.id)} disabled={acked || !matchingAlarm}
           className="relative flex-none text-xs px-3 py-2 disabled:opacity-50"
           style={{ border: '1px solid var(--color-divider)', color: 'var(--color-text)' }}
         >

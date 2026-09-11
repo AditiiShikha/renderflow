@@ -33,7 +33,7 @@ export default function GenerationOverlay({ assetLabel, phaseIndex }) {
         return (
           <div key={label} className="relative flex items-start gap-2.5 py-1 text-sm" style={{ opacity: done ? 1 : 0.4 }}>
             {done ? (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4fae7c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-none mt-0.5">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-normal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-none mt-0.5">
                 <path d="M5 12l5 5L20 7" />
               </svg>
             ) : (
@@ -48,7 +48,7 @@ export default function GenerationOverlay({ assetLabel, phaseIndex }) {
         style={{ borderTop: '1px solid var(--color-divider)', opacity: building ? 1 : 0.4 }}
       >
         {building ? (
-          <span className="w-2 h-2 flex-none mt-0.5 inline-block animate-rf-pulse" style={{ border: '1.5px solid var(--color-accent)', boxShadow: '0 0 8px var(--color-accent)' }} />
+          <span className="w-2 h-2 flex-none mt-0.5 inline-block animate-rf-breathe" style={{ border: '1.5px solid var(--color-accent)', boxShadow: '0 0 8px var(--color-accent)' }} />
         ) : (
           <span className="w-2 h-2 flex-none mt-1 inline-block" style={{ border: '1.5px solid var(--color-divider)' }} />
         )}

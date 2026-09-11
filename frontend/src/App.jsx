@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { generateScreen as requestScreen } from './lib/api';
-import { assetStatus } from './lib/status';
-import { triggerKey, GENERATION_PHASES } from './lib/deriveUi';
+import { assetStatus, STATUS_COLOR } from './lib/status';
+import { triggerKey, GENERATION_PHASES, normalizedActivity } from './lib/deriveUi';
+import { classifyPromptIntent } from './lib/intent';
 import { useMachineContext } from './hooks/useMachineContext';
 import { useTelemetry } from './hooks/useTelemetry';
 import { useAlarms } from './hooks/useAlarms';
 import { useSpeech } from './hooks/useSpeech';
 import BootScreen from './components/BootScreen';
-import EventNotification from './components/EventNotification';
+import AlarmAnnunciator from './components/AlarmAnnunciator';
 import Header from './components/Header';
 import PromptBar from './components/PromptBar';
 import GenerationOverlay from './components/GenerationOverlay';
@@ -30,24 +31,38 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [newHistoryId, setNewHistoryId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [eventNotification, setEventNotification] = useState(null);
+  const [ackedAlarmIds, setAckedAlarmIds] = useState(() => new Set());
+  const [justArrivedAlarmId, setJustArrivedAlarmId] = useState(null);
   const phaseTimerRef = useRef(null);
-  const autoNavTimerRef = useRef(null);
+  const arrivalTimerRef = useRef(null);
 
   const { tagsById, hierarchy, loading: contextLoading, error: contextError } = useMachineContext();
   const { telemetry, trend, online: telemetryOnline, resetTrend } = useTelemetry();
-  const { alarms } = useAlarms((alarm) => {
-    const asset = hierarchy.flatMap((l) => l.assets).find((a) => a.tagIds.includes(alarm.tagId));
-    const tagMeta = tagsById[alarm.tagId];
-    setEventNotification({
-      alarmId: alarm.id,
-      title: asset ? asset.name.toUpperCase() : alarm.tagId,
-      message: alarm.message,
-      value: telemetry[alarm.tagId],
-      unit: tagMeta ? tagMeta.unit : '',
-    });
-    autoNavTimerRef.current = setTimeout(() => dismissNotification(true), 2600);
+  const { alarms, online: alarmsOnline } = useAlarms((alarm) => {
+    // A genuinely new critical alarm gets a one-shot entrance highlight in the
+    // annunciator strip — it never auto-navigates or auto-dismisses. The
+    // operator decides when to acknowledge or view it.
+    setJustArrivedAlarmId(alarm.id);
+    clearTimeout(arrivalTimerRef.current);
+    arrivalTimerRef.current = setTimeout(() => setJustArrivedAlarmId(null), 2400);
   });
+
+  // Alarms the backend still reports active but the operator hasn't cleared
+  // yet. Acks are client-side only (no backend ack endpoint exists), and are
+  // dropped once the backend stops reporting the alarm as active at all.
+  useEffect(() => {
+    const activeIds = new Set(alarms.map((a) => a.id));
+    setAckedAlarmIds((prev) => {
+      const next = new Set([...prev].filter((id) => activeIds.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [alarms]);
+
+  function acknowledgeAlarm(alarmId) {
+    setAckedAlarmIds((prev) => new Set(prev).add(alarmId));
+  }
+
+  const unackedAlarms = alarms.filter((a) => !ackedAlarmIds.has(a.id));
 
   const speech = useSpeech((text) => setPrompt(text));
 
@@ -62,7 +77,7 @@ export default function App() {
 
   useEffect(() => () => {
     clearInterval(phaseTimerRef.current);
-    clearTimeout(autoNavTimerRef.current);
+    clearTimeout(arrivalTimerRef.current);
   }, []);
 
   function startPhaseCycle() {
@@ -80,6 +95,23 @@ export default function App() {
       setError('Enter a request to generate a screen.');
       setScreenSpec(null);
       return;
+    }
+
+    // Intent gate: the backend always answers a prompt with *some* screen
+    // (LLM hallucination or a default-asset fallback), so irrelevant/
+    // ambiguous free text is caught here, before it ever reaches the API.
+    if (trigger.type === 'prompt') {
+      const intent = classifyPromptIntent(trigger.text, { tagsById, hierarchy });
+      if (intent === 'irrelevant') {
+        setError('No operational request detected. Try: "Show me Pump 3 status", "Show me Pump 3 alarm", or "Show me conveyor diagnostics".');
+        setScreenSpec(null);
+        return;
+      }
+      if (intent === 'ambiguous') {
+        setError('Not sure which asset or reading you mean. Try naming one, e.g. "Show me Pump 3 status" or "conveyor diagnostics".');
+        setScreenSpec(null);
+        return;
+      }
     }
 
     setGenerating(true);
@@ -126,13 +158,6 @@ export default function App() {
     setTimeout(() => setNewHistoryId(null), 1700);
   }
 
-  function dismissNotification(navigate) {
-    clearTimeout(autoNavTimerRef.current);
-    const alarmId = eventNotification && eventNotification.alarmId;
-    setEventNotification(null);
-    if (navigate && alarmId) generateScreen({ type: 'alarm', alarmId });
-  }
-
   function handlePromptChange(value, submit) {
     setPrompt(value);
     if (submit) generateScreen({ type: 'prompt', text: value });
@@ -142,7 +167,10 @@ export default function App() {
   const conveyorAsset = hierarchy.flatMap((l) => l.assets).find((a) => a.id === 'conveyor_1');
   const pumpStatus = pumpAsset ? assetStatus(pumpAsset.tagIds, telemetry, tagsById) : 'normal';
   const conveyorStatus = conveyorAsset ? assetStatus(conveyorAsset.tagIds, telemetry, tagsById) : 'normal';
-  const STATUS_COLOR = { normal: '#46c17d', warning: '#e0a63f', critical: '#e0554a' };
+  // Schematic motion speed reads the same real tag its severity color comes
+  // from (pump vibration, conveyor line speed) — not a fixed decorative rate.
+  const pumpActivity = normalizedActivity(pumpAsset, 'vibration', telemetry, tagsById);
+  const conveyorActivity = normalizedActivity(conveyorAsset, 'speed', telemetry, tagsById);
 
   if (contextError) {
     return (
@@ -155,16 +183,27 @@ export default function App() {
   return (
     <div className="rf-app-bg min-h-screen flex flex-col relative font-body" style={{ color: 'var(--color-text)' }}>
       <BootScreen visible={booting || contextLoading} assetCount={hierarchy.reduce((n, l) => n + l.assets.length, 0) || null} tagCount={Object.keys(tagsById).length || null} />
-      <EventNotification notification={eventNotification} onClose={() => dismissNotification(false)} onView={() => dismissNotification(true)} />
 
       <Header
         pumpStatusColor={STATUS_COLOR[pumpStatus]} conveyorStatusColor={STATUS_COLOR[conveyorStatus]}
         pumpCritical={pumpStatus === 'critical'} onToggleSidebar={() => setSidebarOpen((v) => !v)}
+        systemOnline={telemetryOnline && alarmsOnline}
+        pumpActivity={pumpActivity} conveyorActivity={conveyorActivity}
+      />
+
+      <AlarmAnnunciator
+        alarms={unackedAlarms} justArrivedId={justArrivedAlarmId} tagsById={tagsById} telemetry={telemetry} hierarchy={hierarchy}
+        onAcknowledge={acknowledgeAlarm} onView={(alarmId) => generateScreen({ type: 'alarm', alarmId })}
       />
 
       {!telemetryOnline && (
-        <div className="px-5 py-1.5 text-[11px] tracking-wide uppercase" style={{ background: 'rgba(224,85,74,0.15)', color: '#e0554a' }}>
+        <div className="px-5 py-1.5 text-[11px] tracking-wide uppercase" style={{ background: 'rgba(224,85,74,0.15)', color: 'var(--color-critical)' }}>
           Backend telemetry unreachable — showing last known values
+        </div>
+      )}
+      {!alarmsOnline && (
+        <div className="px-5 py-1.5 text-[11px] tracking-wide uppercase" style={{ background: 'rgba(224,85,74,0.15)', color: 'var(--color-critical)' }}>
+          Alarm monitoring unreachable — active alarms may be stale
         </div>
       )}
 
@@ -184,6 +223,8 @@ export default function App() {
               spec={screenSpec} telemetry={telemetry} trend={trend} tagsById={tagsById} hierarchy={hierarchy} alarms={alarms}
               pumpStatusColor={STATUS_COLOR[pumpStatus]} pumpCritical={pumpStatus === 'critical'}
               conveyorStatusColor={STATUS_COLOR[conveyorStatus]}
+              pumpActivity={pumpActivity} conveyorActivity={conveyorActivity}
+              ackedAlarmIds={ackedAlarmIds} onAcknowledgeAlarm={acknowledgeAlarm}
             />
           )}
         </main>

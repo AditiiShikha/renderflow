@@ -21,7 +21,12 @@ const REGISTRY = {
   gauge: (w, i, ctx) => <Gauge key={i} widget={w} value={ctx.telemetry[w.tag]} tagsById={ctx.tagsById} delayMs={i * 60} />,
   trend: (w, i, ctx) => <Trend key={i} widget={w} value={ctx.telemetry[w.tag]} points={ctx.trend[w.tag] || []} tagsById={ctx.tagsById} delayMs={i * 60} />,
   numeric_card: (w, i, ctx) => <NumericCard key={i} widget={w} value={ctx.telemetry[w.tag]} tagsById={ctx.tagsById} delayMs={i * 60} />,
-  alarm_banner: (w, i, ctx) => <AlarmBanner key={i} widget={w} telemetry={ctx.telemetry} tagsById={ctx.tagsById} alarms={ctx.alarms} delayMs={i * 60} />,
+  alarm_banner: (w, i, ctx) => (
+    <AlarmBanner
+      key={i} widget={w} telemetry={ctx.telemetry} tagsById={ctx.tagsById} alarms={ctx.alarms} delayMs={i * 60}
+      ackedAlarmIds={ctx.ackedAlarmIds} onAcknowledge={ctx.onAcknowledgeAlarm}
+    />
+  ),
   table: (w, i, ctx) => <DiagnosticTable key={i} widget={w} telemetry={ctx.telemetry} tagsById={ctx.tagsById} delayMs={i * 60} />,
   toggle: (w, i, ctx) => <Toggle key={i} widget={w} tagsById={ctx.tagsById} delayMs={i * 60} />,
 };
@@ -37,7 +42,7 @@ function UnknownWidget({ type }) {
   );
 }
 
-export default function ScreenCanvas({ spec, telemetry, trend, tagsById, hierarchy, alarms, pumpStatusColor, pumpCritical, conveyorStatusColor }) {
+export default function ScreenCanvas({ spec, telemetry, trend, tagsById, hierarchy, alarms, pumpStatusColor, pumpCritical, conveyorStatusColor, pumpActivity, conveyorActivity, ackedAlarmIds, onAcknowledgeAlarm }) {
   const triggerLabel = spec.trigger.type === 'alarm' ? 'Automated Alarm' : 'Operator Prompt';
   const asset = resolveAsset(spec, hierarchy);
   const showPumpSchematic = asset && asset.id === 'pump_3';
@@ -53,22 +58,28 @@ export default function ScreenCanvas({ spec, telemetry, trend, tagsById, hierarc
       {showPumpSchematic && (
         <div className="relative p-4 mb-4" style={{ background: 'linear-gradient(165deg, rgba(143,174,114,0.08), var(--color-surface) 60%)', border: '1px solid var(--color-divider)' }}>
           <Corners />
-          <PumpSchematic statusColor={pumpStatusColor} critical={pumpCritical} size="large" />
+          <PumpSchematic statusColor={pumpStatusColor} critical={pumpCritical} size="large" activity={pumpActivity} />
         </div>
       )}
       {showConveyorSchematic && (
         <div className="relative p-4 mb-4" style={{ background: 'linear-gradient(165deg, rgba(143,174,114,0.08), var(--color-surface) 60%)', border: '1px solid var(--color-divider)' }}>
           <Corners />
-          <ConveyorSchematic statusColor={conveyorStatusColor} size="large" />
+          <ConveyorSchematic statusColor={conveyorStatusColor} size="large" activity={conveyorActivity} />
         </div>
       )}
 
-      <div className="flex flex-wrap gap-4">
-        {spec.widgets.map((w, i) => {
-          const render = REGISTRY[w.type];
-          return render ? render(w, i, { telemetry, trend, tagsById, alarms }) : <UnknownWidget key={i} type={w.type} />;
-        })}
-      </div>
+      {spec.widgets.length === 0 ? (
+        <div className="relative p-4 text-sm opacity-70" style={{ border: '1px dashed var(--color-divider)' }}>
+          This screen has no widgets to display.
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-4">
+          {spec.widgets.map((w, i) => {
+            const render = REGISTRY[w.type];
+            return render ? render(w, i, { telemetry, trend, tagsById, alarms, ackedAlarmIds, onAcknowledgeAlarm }) : <UnknownWidget key={i} type={w.type} />;
+          })}
+        </div>
+      )}
     </div>
   );
 }

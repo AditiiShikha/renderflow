@@ -1,9 +1,67 @@
 /* Ported from frontend/react-export/src/index.css.
    The original imported Barlow/Barlow Condensed from Google Fonts at runtime —
-   removed for the air-gapped/on-premise requirement. No self-hosted font files
-   are bundled in this repo, so we fall back to system fonts only (see
-   tailwind.config.js's fontFamily stacks) rather than introduce any new
-   external runtime dependency. */
+   that runtime CDN dependency is gone (air-gapped/on-premise requirement),
+   but the typeface itself is self-hosted below as static .woff2 files under
+   public/fonts/, so the "technical condensed" heading voice actually renders
+   instead of silently falling back to the platform sans (see
+   tailwind.config.cjs's fontFamily stacks). */
+
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/barlow-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/barlow-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/barlow-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/barlow-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/barlow-condensed-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/barlow-condensed-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/barlow-condensed-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/barlow-condensed-700.woff2') format('woff2');
+}
 
 @tailwind base;
 @tailwind components;
@@ -18,6 +76,7 @@
   --color-normal: #46c17d;
   --color-warning: #e0a63f;
   --color-critical: #e0554a;
+  --color-muted: #9a9a86;
 }
 
 html, body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
@@ -29,6 +88,18 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-text); f
     radial-gradient(circle at 18% -8%, rgba(230, 215, 174, 0.14), transparent 55%),
     radial-gradient(circle at 90% 100%, rgba(143, 174, 114, 0.16), transparent 60%),
     linear-gradient(165deg, #14260f 0%, #1e3420 38%, #2a4530 68%, #172a19 100%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rf-pulse, .animate-rf-scan, .animate-rf-blink, .animate-rf-alarmglow,
+  .animate-rf-rotate, .animate-rf-breathe, .animate-rf-highlight, .animate-rf-fadein {
+    animation: none !important;
+  }
 }
 
 /* Blueprint frame: hairline border + four "+" corner registration marks, per the Industry design system */

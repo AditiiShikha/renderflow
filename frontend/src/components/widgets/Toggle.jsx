@@ -22,7 +22,8 @@ export default function Toggle({ widget, tagsById, delayMs }) {
           <div className="text-[11px] opacity-55">{meta ? meta.name : widget.tag}</div>
         </div>
         <button
-          type="button" onClick={() => setOn((v) => !v)} aria-label="Toggle"
+          type="button" onClick={() => setOn((v) => !v)}
+          role="switch" aria-checked={on} aria-label={widget.label || (meta ? meta.name : 'Toggle')}
           className="relative w-10 h-[22px] p-0 transition-colors duration-200"
           style={{ border: '1px solid var(--color-divider)', background: on ? 'var(--color-accent)' : 'var(--color-divider)' }}
         >

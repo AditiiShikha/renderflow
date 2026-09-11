@@ -47,7 +47,7 @@ export default function Trend({ widget, value, points, tagsById, delayMs }) {
         <line x1="0" y1={warnY} x2="100" y2={warnY} stroke="rgba(243,239,224,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
         <line x1="0" y1={critY} x2="100" y2={critY} stroke="rgba(243,239,224,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
         <polyline points={pointStr} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 0.5s ease' }} />
-        <circle cx={last.x} cy={last.y} r="1.8" fill={color} className="animate-rf-pulse" />
+        <circle cx={last.x} cy={last.y} r="1.8" fill={color} className={status !== 'normal' ? 'animate-rf-pulse' : ''} />
       </svg>
     </WidgetCard>
   );

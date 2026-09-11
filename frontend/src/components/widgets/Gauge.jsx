@@ -19,7 +19,7 @@ export default function Gauge({ widget, value, tagsById, delayMs }) {
 
   const status = statusOf(widget.tag, value, tagsById);
   const color = STATUS_COLOR[status];
-  const pct = Math.max(0, Math.min(100, ((value - meta.min) / (meta.max - meta.min)) * 100));
+  const pct = value == null ? 0 : Math.max(0, Math.min(100, ((value - meta.min) / (meta.max - meta.min)) * 100));
   const warnPct = ((meta.warnThreshold - meta.min) / (meta.max - meta.min)) * 100;
   const critPct = ((meta.critThreshold - meta.min) / (meta.max - meta.min)) * 100;
   const flexBasis = widget.size === 'large' ? '1 1 100%' : widget.size === 'medium' ? '1 1 380px' : '1 1 240px';

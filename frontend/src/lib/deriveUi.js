@@ -38,3 +38,20 @@ export function triggerKey(trigger) {
 // they do not claim the backend performs any specific named step ("Temperature
 // telemetry found", etc.) that we can't actually verify happened.
 export const GENERATION_PHASES = ['Analyzing context', 'Selecting relevant machine data', 'Building operator view'];
+
+// Finds the asset's tag in a given category (e.g. 'vibration', 'speed') and
+// normalizes its current telemetry reading to 0..1 against that tag's own
+// min/max — used to drive schematic motion speed off a real physical value
+// instead of a fixed decorative rate. Returns null when the asset/tag/value
+// isn't available so callers can fall back to a calm baseline rather than
+// fabricate an activity level.
+export function normalizedActivity(asset, category, telemetry, tagsById) {
+  if (!asset) return null;
+  const tag = asset.tagIds.map((id) => tagsById[id]).find((t) => t && t.category === category);
+  if (!tag) return null;
+  const value = telemetry[tag.id];
+  if (value == null) return null;
+  const range = tag.max - tag.min;
+  if (!range) return null;
+  return Math.max(0, Math.min(1, (value - tag.min) / range));
+}
