@@ -4,19 +4,21 @@
 // /api/telemetry itself only returns a point-in-time snapshot.
 import WidgetCard from './WidgetCard';
 import { statusOf, STATUS_COLOR, fmt } from '../../lib/status';
+import { buildExplanation } from '../../lib/diagnostics';
 
-export default function Trend({ widget, value, points, tagsById, delayMs }) {
+export default function Trend({ widget, value, points, telemetry, hierarchy, tagsById, delayMs }) {
   const meta = tagsById[widget.tag];
   if (!meta) {
     return (
       <WidgetCard kicker={widget.tag} statusColor="var(--color-accent)" delayMs={delayMs} reason={widget.reason} flexBasis="1 1 100%">
-        <div className="relative text-xs opacity-60">Unknown tag "{widget.tag}"</div>
+        <div className="relative text-sm" style={{ color: 'var(--color-muted)' }}>Unknown tag "{widget.tag}"</div>
       </WidgetCard>
     );
   }
 
   const status = statusOf(widget.tag, value, tagsById);
   const color = STATUS_COLOR[status];
+  const explanation = buildExplanation({ tagIds: [widget.tag], telemetry, tagsById, hierarchy });
   const range = meta.max - meta.min;
   const warnY = 40 - ((meta.warnThreshold - meta.min) / range) * 40;
   const critY = 40 - ((meta.critThreshold - meta.min) / range) * 40;
@@ -31,23 +33,23 @@ export default function Trend({ widget, value, points, tagsById, delayMs }) {
 
   return (
     <WidgetCard
-      kicker={meta.name} statusColor={color} critical={status === 'critical'} delayMs={delayMs} reason={widget.reason}
+      kicker={meta.name} statusColor={color} critical={status === 'critical'} delayMs={delayMs} reason={widget.reason} explanation={explanation}
       flexBasis="1 1 100%" borderColor={status === 'critical' ? color : undefined}
-      cardBg="linear-gradient(165deg, rgba(230,215,174,0.09), var(--color-surface) 60%)"
+      cardBg="linear-gradient(165deg, rgba(236,230,214,0.07), var(--color-surface) 60%)"
     >
-      <div className="relative flex items-baseline justify-between mb-2">
+      <div className="relative flex items-baseline justify-between mb-3">
         <div>
-          <div className="text-xs opacity-70">{meta.name}</div>
-          <span className="font-heading text-2xl font-semibold transition-colors duration-500" style={{ color }}>{fmt(value)}</span>
-          <span className="text-xs opacity-65"> {meta.unit}</span>
+          <div className="text-sm" style={{ color: 'var(--color-muted)' }}>{meta.name}</div>
+          <span className="font-heading text-3xl font-semibold transition-colors duration-500" style={{ color }}>{fmt(value)}</span>
+          <span className="text-sm" style={{ color: 'var(--color-muted)' }}> {meta.unit}</span>
         </div>
-        <span className="text-[10px] opacity-50 uppercase tracking-wide">{windowLabel}</span>
+        <span className="font-label text-xs uppercase tracking-wide" style={{ color: 'var(--color-muted)' }}>{windowLabel}</span>
       </div>
       <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="w-full h-[70px] block relative">
-        <line x1="0" y1={warnY} x2="100" y2={warnY} stroke="rgba(243,239,224,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
-        <line x1="0" y1={critY} x2="100" y2={critY} stroke="rgba(243,239,224,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
+        <line x1="0" y1={warnY} x2="100" y2={warnY} stroke="rgba(241,236,221,0.2)" strokeWidth="0.5" strokeDasharray="2,2" />
+        <line x1="0" y1={critY} x2="100" y2={critY} stroke="rgba(241,236,221,0.2)" strokeWidth="0.5" strokeDasharray="2,2" />
         <polyline points={pointStr} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 0.5s ease' }} />
-        <circle cx={last.x} cy={last.y} r="1.8" fill={color} className="animate-rf-pulse" />
+        <circle cx={last.x} cy={last.y} r="1.8" fill={color} className={status !== 'normal' ? 'animate-rf-pulse' : ''} />
       </svg>
     </WidgetCard>
   );

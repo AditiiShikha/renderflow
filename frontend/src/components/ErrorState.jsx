@@ -4,12 +4,12 @@ import Corners from './Corners';
 export default function ErrorState({ message }) {
   return (
     <div
-      className="relative max-w-[460px] mx-auto mt-16 p-5"
-      style={{ background: 'linear-gradient(165deg, rgba(224,85,74,0.12), var(--color-surface) 55%)', border: '1px solid #e0554a' }}
+      className="relative max-w-[480px] mx-auto mt-16 p-6 rounded-2xl"
+      style={{ background: 'linear-gradient(165deg, rgba(193,104,92,0.14), var(--color-surface) 55%)', boxShadow: 'var(--shadow-card-lg), inset 0 0 0 1px rgba(193,104,92,0.35)' }}
     >
       <Corners />
-      <div className="text-[11px] tracking-[0.08em] uppercase font-semibold mb-1" style={{ color: '#e0554a' }}>Unable To Generate</div>
-      <p className="text-sm m-0">{message}</p>
+      <div className="font-label text-xs tracking-[0.08em] uppercase font-semibold mb-2" style={{ color: 'var(--color-critical)' }}>Unable To Generate</div>
+      <p className="text-base leading-relaxed m-0" style={{ color: 'var(--color-text)' }}>{message}</p>
     </div>
   );
 }
