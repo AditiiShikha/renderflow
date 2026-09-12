@@ -25,4 +25,9 @@ npm-debug.log*
 package-lock.json
 
 .claude
+RENDERFLOW_REFERENCE
+renderflow-8hr-build-plan (1)
+.impeccable
+.agents
+skills.lock.json
 
